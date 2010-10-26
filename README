@@ -1,0 +1,17 @@
+# lein-metrics
+
+Metrics for your Clojure code.
+
+## Usage
+
+lein metrics count
+
+## Installation
+
+Add as a development dependency to your Leiningen project.
+
+## License
+
+Copyright (C) 2010 Paul Stadig
+
+Distributed under the Eclipse Public License, the same as Clojure.
