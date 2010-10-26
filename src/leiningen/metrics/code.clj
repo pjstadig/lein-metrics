@@ -2,15 +2,32 @@
   (:use [clojure.java.io :only [reader file]])
   (:import [java.io PushbackReader]))
 
+(defn clj?
+  "Return true if file is a clojure source file"
+  [file]
+  (re-find #"\.clj$" (.getCanonicalPath file)))
+
+(defn find-files [dir pred]
+  (doall (filter pred
+                 (mapcat #(if (.isDirectory %)
+                            (find-files % pred)
+                            [%])
+                         (.listFiles dir)))))
+
 (defn read-code
   ([file]
      (read-code file []))
   ([file code]
-     (let [e (read file false ::eof)]
+     (let [file (PushbackReader. (reader file))
+           e (read file false ::eof)]
        (lazy-seq
         (if (= ::eof e)
           code
           (read-code file (conj code e)))))))
+
+(defn codes [dir]
+  (map read-code
+       (find-files dir clj?)))
 
 (defn get-ns [code]
   (second (first (filter #(= 'ns (first %)) code))))
